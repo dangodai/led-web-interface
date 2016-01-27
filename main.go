@@ -1,21 +1,22 @@
 package main
 
-import(
+import (
 	//"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
-	"os/exec"
+
 	"github.com/dangodai/led-web-interface/colour"
+	"github.com/dangodai/led-web-interface/pigpio"
 )
 
-const (
-	RED_PIN = "17"
-	GREEN_PIN = "22"
-	BLUE_PIN = "24"
+var (
+	myRGB *pigpio.RGB
 )
 
 func main() {
+	myRGB = &pigpio.RGB{17, 22, 24}
+
 	http.HandleFunc("/", pageHandler)
 	http.HandleFunc("/static/", staticFileHandler)
 	http.ListenAndServe(":80", nil)
@@ -26,11 +27,11 @@ func main() {
 	for the front page of the website
 */
 func pageHandler(w http.ResponseWriter, r *http.Request) {
-	if(r.Method == "POST") {
+	if r.Method == "POST" {
 		r.ParseForm()
 		c := parseFormColors(r)
 
-		execColour(c)
+		myRGB.ExecuteColour(c)
 	}
 
 	homeTemplate, _ := template.ParseFiles("index.html")
@@ -58,15 +59,4 @@ func parseFormColors(r *http.Request) colour.Colour {
 	}
 
 	return colour.Colour{r.PostForm["red"][0], r.PostForm["green"][0], r.PostForm["blue"][0]}
-}
-
-func execColour(c colour.Colour){
-	cmd := "pigs"
-
-	args := []string{"p", RED_PIN, c.Red}
-	_ = exec.Command(cmd, args...).Run()
-	args = []string{"p", GREEN_PIN, c.Green}
-	_ = exec.Command(cmd, args...).Run()
-	args = []string{"p", BLUE_PIN, c.Blue}
-	_ = exec.Command(cmd, args...).Run()
 }
