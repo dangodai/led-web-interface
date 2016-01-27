@@ -34,7 +34,7 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 		myRGB.ExecuteColour(c)
 	}
 
-	homeTemplate, _ := template.ParseFiles("index.html")
+	homeTemplate, _ := template.ParseFiles("templates/index.html")
 	homeTemplate.Execute(w, nil)
 }
 
