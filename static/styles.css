@@ -1,7 +1,20 @@
 body {
-	background-color: #B6D2DB;
+	background-color: #261E20;
+	color: #e5e5e5;
 }
 
 input {
-	background-color: #DBBFB6;
+	color: #261E20;
+}
+
+input[name="red"] {
+	background-color: #E874A9;
+}
+
+input[name="blue"] {
+	background-color: #78C5D6;
+}
+
+input[name="green"] {
+	background-color: #79C267;
 }

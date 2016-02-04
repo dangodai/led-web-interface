@@ -12,10 +12,13 @@ import (
 
 var (
 	myRGB *pigpio.RGB
+	myWhite *pigpio.FixedColour
 )
 
 func main() {
 	myRGB = &pigpio.RGB{17, 22, 24}
+	myWhite = &pigpio.FixedColour{pigpio.Brightness{27}}	
+	myWhite.SetBrightness(25);
 
 	http.HandleFunc("/", pageHandler)
 	http.HandleFunc("/static/", staticFileHandler)
