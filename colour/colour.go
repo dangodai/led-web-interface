@@ -5,7 +5,7 @@ import(
 )
 
 type Colour struct {
-	Red, Green, Blue string
+	Red, Green, Blue int
 }
 
 func (c *Colour) String() string {

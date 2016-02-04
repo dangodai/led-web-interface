@@ -5,16 +5,24 @@ body {
 
 input {
 	color: #261E20;
+	height: 25%;
+	width: 100%;
+	font-size: 11em;
+	text-align: center;
 }
 
-input[name="red"] {
+#red {
 	background-color: #E874A9;
 }
 
-input[name="blue"] {
+#blue {
 	background-color: #78C5D6;
 }
 
-input[name="green"] {
+#green {
 	background-color: #79C267;
+}
+
+#white {
+	background-color: #E7E7E7;
 }

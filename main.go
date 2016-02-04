@@ -1,7 +1,7 @@
 package main
 
 import (
-	//"fmt"
+	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -18,7 +18,6 @@ var (
 func main() {
 	myRGB = &pigpio.RGB{17, 22, 24}
 	myWhite = &pigpio.FixedColour{pigpio.Brightness{27}}	
-	myWhite.SetBrightness(25);
 
 	http.HandleFunc("/", pageHandler)
 	http.HandleFunc("/static/", staticFileHandler)
@@ -32,9 +31,12 @@ func main() {
 func pageHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		r.ParseForm()
-		c := parseFormColors(r)
-
-		myRGB.ExecuteColour(c)
+		fmt.Println(r.Form,"\n")
+		
+		c, err := parseFormColors(r)
+		if err == nil {myRGB.ExecuteColour(c)}
+		b, err := parseFormSingleLight(r)
+		if err == nil {myWhite.SetBrightness(b)}	
 	}
 
 	homeTemplate, _ := template.ParseFiles("templates/index.html")
@@ -45,21 +47,29 @@ func staticFileHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, r.URL.Path[1:])
 }
 
-func parseFormColors(r *http.Request) colour.Colour {
-	_, err := strconv.Atoi(r.PostForm["red"][0])
-	if err != nil {
-		return colour.Colour{"0", "0", "0"}
-	}
+func parseFormSingleLight(r *http.Request) (int, error) {
+	
+	l, err := strconv.Atoi(r.PostForm["white"][0])
+		
+	return l, err
+}
 
-	_, err = strconv.Atoi(r.PostForm["green"][0])
-	if err != nil {
-		return colour.Colour{"0", "0", "0"}
-	}
+func parseFormColors(r *http.Request) (colour.Colour, error) {
 
-	_, err = strconv.Atoi(r.PostForm["blue"][0])
-	if err != nil {
-		return colour.Colour{"0", "0", "0"}
-	}
+	c := colour.Colour{0, 0, 0}
 
-	return colour.Colour{r.PostForm["red"][0], r.PostForm["green"][0], r.PostForm["blue"][0]}
+	c.Red, _ = strconv.Atoi(r.PostForm["red"][0])
+	_, err1 := strconv.Atoi(r.PostForm["red"][0])
+
+	c.Green, _ = strconv.Atoi(r.PostForm["green"][0])
+	_, err2 := strconv.Atoi(r.PostForm["green"][0])
+
+	c.Blue, _ = strconv.Atoi(r.PostForm["blue"][0])
+	_, err3 := strconv.Atoi(r.PostForm["blue"][0])
+
+	if (err1 != nil && err2 != nil && err3 != nil) {
+		return c, err3
+	} else {
+		return c, nil
+	}
 }
